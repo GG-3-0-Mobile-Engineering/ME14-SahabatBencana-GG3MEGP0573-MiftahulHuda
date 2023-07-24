@@ -9,6 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavGraph
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -23,6 +26,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.miftahulhudaf.sahabatbencana.data.api.RetrofitBuilder
 import com.miftahulhudaf.sahabatbencana.data.response.archive.Disaster
 import com.miftahulhudaf.sahabatbencana.databinding.ActivityMainBinding
+import com.miftahulhudaf.sahabatbencana.databinding.FragmentMapsBinding
 import com.miftahulhudaf.sahabatbencana.ui.base.ViewModelFactory
 import com.miftahulhudaf.sahabatbencana.ui.main.adapter.DisasterAdapter
 import com.miftahulhudaf.sahabatbencana.ui.main.viewmodel.MainViewModel
@@ -30,6 +34,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MapsFragment : Fragment() {
 
+    private lateinit var binding: FragmentMapsBinding
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
     private lateinit var rvItems: RecyclerView
 
@@ -44,12 +49,21 @@ class MapsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_maps, container, false)
+        binding = FragmentMapsBinding.inflate(layoutInflater)
+        binding.imageButton.setOnClickListener {
+            findNavController(binding.root).navigate(
+                R.id.action_mapsFragment_to_settingFragment
+            )
+        }
+
+        return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val mapFragment = childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment?
+
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
 
         setupViewModel(view)
@@ -58,7 +72,6 @@ class MapsFragment : Fragment() {
 
     private val callback = OnMapReadyCallback { googleMap ->
         mainViewModel.disasterList.observe(this) {
-            Log.d("MAPS FRAGMENT", "testing")
             renderDisasterMarker(googleMap, it)
         }
         mainViewModel.getAllDisaster()
@@ -106,7 +119,7 @@ class MapsFragment : Fragment() {
                     MarkerOptions()
                         .position(latLng)
                         .title(feature.properties?.title)
-                        .snippet(feature.properties?.text)
+                        .snippet(feature.properties?.createdAt)
                 )
                 boundsBuilder.include(latLng)
             }
