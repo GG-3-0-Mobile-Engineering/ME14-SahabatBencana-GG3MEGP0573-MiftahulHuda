@@ -7,7 +7,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.miftahulhudaf.sahabatbencana.data.model.Disaster
+import com.miftahulhudaf.sahabatbencana.data.response.archive.Disaster
 import com.miftahulhudaf.sahabatbencana.utils.NetworkState
 import kotlinx.coroutines.*
 

@@ -1,9 +1,8 @@
-package com.miftahulhudaf.sahabatbencana.data.response
+package com.miftahulhudaf.sahabatbencana.data.response.archive
 
 import com.google.gson.annotations.SerializedName
-import com.miftahulhudaf.sahabatbencana.data.model.Result
 
-data class APIResponse(
+data class ArchiveResponse(
 
 	@field:SerializedName("result")
 	val result: Result? = null,

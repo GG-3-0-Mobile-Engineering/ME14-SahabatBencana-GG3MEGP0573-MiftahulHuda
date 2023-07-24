@@ -3,11 +3,11 @@ package com.miftahulhudaf.sahabatbencana.ui.main.adapter
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Adapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.miftahulhudaf.sahabatbencana.data.model.Disaster
+import com.miftahulhudaf.sahabatbencana.data.response.archive.Disaster
 import com.miftahulhudaf.sahabatbencana.databinding.DisasterItemBinding
+import com.miftahulhudaf.sahabatbencana.utils.loadImageFromUrl
 
 class DisasterAdapter : RecyclerView.Adapter<DisasterAdapter.MainViewHolder>() {
 
@@ -17,8 +17,20 @@ class DisasterAdapter : RecyclerView.Adapter<DisasterAdapter.MainViewHolder>() {
         RecyclerView.ViewHolder(binding.root) {
         fun bind(disaster: Disaster) {
             with(binding) {
-                title.text = disaster.properties?.title
-                Glide.with(itemView.context).load(disaster.properties?.imageUrl).into(binding.imageview)
+
+                if(disaster.properties?.title?.trim() == "") {
+                    title.text = "Bencana Alam"
+                } else {
+                    title.text = disaster.properties?.title
+                }
+
+                if(disaster.properties?.text?.trim() == "") {
+                    desc.text = "Bencana Alam"
+                } else {
+                    desc.text = disaster.properties?.text?.take(100)
+                }
+
+                disaster.properties?.imageUrl?.let { imageview.loadImageFromUrl(it) }
             }
         }
     }

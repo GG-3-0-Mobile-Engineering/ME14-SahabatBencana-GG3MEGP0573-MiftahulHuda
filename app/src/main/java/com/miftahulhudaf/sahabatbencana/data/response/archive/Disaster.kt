@@ -1,4 +1,4 @@
-package com.miftahulhudaf.sahabatbencana.data.model
+package com.miftahulhudaf.sahabatbencana.data.response.archive
 
 import com.google.gson.annotations.SerializedName
 

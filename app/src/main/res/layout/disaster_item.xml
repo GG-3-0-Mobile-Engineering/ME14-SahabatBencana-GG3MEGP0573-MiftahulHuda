@@ -32,8 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/imageview"
             android:orientation="vertical"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_margin="10dp"
             >
 
             <TextView
@@ -49,7 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Supporting line text lorem ipsum dolor sit amet, consectetur"
-                android:textFontWeight="800"
+                android:alpha="0.7"
                 />
         </LinearLayout>
     </RelativeLayout>
