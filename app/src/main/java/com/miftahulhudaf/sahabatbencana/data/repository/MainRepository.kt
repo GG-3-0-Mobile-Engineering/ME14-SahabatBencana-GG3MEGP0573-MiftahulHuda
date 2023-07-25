@@ -20,19 +20,6 @@ class MainRepository(private val apiService: ApiService) {
     val supportedLocations: List<LocationData> = LocalData.getSupportedLocation()
     val disasterTypes: List<DisasterType> = LocalData.getDisasterTypes()
 
-    suspend fun getDisasters() : NetworkState<ArchiveResponse> {
-        val response = apiService.getDisasters()
-        return if (response.isSuccessful) {
-            val responseBody = response.body()
-            if ((responseBody != null) && (responseBody.statusCode == 200)) {
-                NetworkState.Success(responseBody)
-            } else {
-                NetworkState.Error(response)
-            }
-        } else {
-            NetworkState.Error(response)
-        }
-    }
 
     fun getReportsArchive(cityName: String? = null): Flow<Resource<List<Disaster>>> = flow {
         emit(Resource.Loading())

@@ -7,8 +7,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface ApiService {
-    @GET("reports/archive?start=2017-12-04T00%3A00%3A00%2B0700&end=2017-12-06T05%3A00%3A00%2B0700&geoformat=geojson")
-    suspend fun getDisasters(): Response<ArchiveResponse>
 
     @GET("reports/archive")
     suspend fun getReportsArchive(

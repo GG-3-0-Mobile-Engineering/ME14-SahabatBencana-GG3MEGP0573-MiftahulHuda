@@ -15,6 +15,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CursorAdapter
+import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.SearchView
 import android.widget.SimpleCursorAdapter
 import android.widget.TextView
@@ -62,6 +64,7 @@ class MapsFragment : Fragment(),
     private lateinit var binding: FragmentMapsBinding
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
     private lateinit var rvItems: RecyclerView
+    private lateinit var pgLoading: LinearLayout
 
     private val adapter = DisasterAdapter()
 
@@ -107,9 +110,14 @@ class MapsFragment : Fragment(),
                     Toast.makeText(activity, resource.message, Toast.LENGTH_SHORT).show()
                 }
 
-                is Resource.Loading -> {}
+                is Resource.Loading -> {
+                    pgLoading.setVisibility(View.VISIBLE)
+                }
 
                 is Resource.Success -> {
+                    pgLoading.setVisibility(View.GONE)
+                    rvItems.setVisibility(View.VISIBLE)
+
                     val properties = resource.data!!.map { it.properties }
                     showDisasterList(properties)
                     renderDisasterMarker(googleMap, resource.data)
@@ -131,7 +139,9 @@ class MapsFragment : Fragment(),
 
     private fun setupViewModel(view: View) {
         val bottomSheet = view.findViewById<View>(R.id.bottom_sheet)
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet).apply {
+            state = BottomSheetBehavior.STATE_HALF_EXPANDED
+        }
 
         val lblDate = view.findViewById<TextView>(R.id.lblDate)
         lblDate.text = DateHelper.selectedDateLabel()
@@ -140,6 +150,8 @@ class MapsFragment : Fragment(),
             layoutManager = LinearLayoutManager(activity)
             setHasFixedSize(true)
         }
+
+        pgLoading = bottomSheet.findViewById(R.id.circleLoading)
 
         binding.rvCategory.apply {
             layoutManager = LinearLayoutManager(activity).apply {
