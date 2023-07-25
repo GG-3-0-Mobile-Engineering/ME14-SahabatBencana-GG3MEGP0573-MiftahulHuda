@@ -31,4 +31,17 @@ object DateHelper {
 
         return dateFormat.format(dateOneWeekAgo)
     }
+
+    fun selectedDateLabel(): String {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("d MMMM yyyy (HH:mm)", Locale.getDefault())
+
+        val start = getDateTimeOneWeekAgoWithTimeZoneOffset()
+        val end = getCurrentDateTimeWithTimeZoneOffset()
+
+        val dateStart = inputFormat.parse(start)
+        val dateEnd = inputFormat.parse(end)
+
+        return "${outputFormat.format(dateStart)} - ${outputFormat.format(dateEnd)}"
+    }
 }

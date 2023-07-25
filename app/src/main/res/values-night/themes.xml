@@ -2,6 +2,9 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.SahabatBencana" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="backgroundColor">@color/black</item>
+        <item name="textFillColor">@color/white</item>
+        <item name="colorPrimary">@color/secondary</item>
     </style>
+
 </resources>

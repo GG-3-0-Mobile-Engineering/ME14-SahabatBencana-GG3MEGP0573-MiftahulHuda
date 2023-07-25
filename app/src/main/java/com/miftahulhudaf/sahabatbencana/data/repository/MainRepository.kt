@@ -60,7 +60,7 @@ class MainRepository(private val apiService: ApiService) {
             if (features.isNotEmpty()) {
                 emit(Resource.Success(features))
             } else {
-                emit(Resource.Error("Empty List!"))
+                emit(Resource.Error("Bencana Tidak Ditemukan!"))
             }
         } catch (e: HttpException) {
             Log.e(TAG, "getReportsArchive: ${e.message()}")
@@ -76,10 +76,10 @@ class MainRepository(private val apiService: ApiService) {
             if (geometries.isNotEmpty()) {
                 emit(Resource.Success(geometries))
             } else {
-                emit(Resource.Error("Empty List!"))
+                emit(Resource.Error("Bencana Tidak Ditemukan!"))
             }
         } catch (e: HttpException) {
-            Log.e(TAG, "getReportsArchive: ${e.message()}")
+            Log.e(TAG, "getMonitoring: ${e.message()}")
             emit(Resource.Error(e.message()))
         }
     }

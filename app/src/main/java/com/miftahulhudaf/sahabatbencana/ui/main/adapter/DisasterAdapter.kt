@@ -1,15 +1,17 @@
 package com.miftahulhudaf.sahabatbencana.ui.main.adapter
 
+import android.R
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.miftahulhudaf.sahabatbencana.data.response.archive.Disaster
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
+import com.bumptech.glide.request.RequestOptions
 import com.miftahulhudaf.sahabatbencana.data.response.archive.DisasterProperty
 import com.miftahulhudaf.sahabatbencana.data.utils.LocalData
 import com.miftahulhudaf.sahabatbencana.databinding.DisasterItemBinding
 import com.miftahulhudaf.sahabatbencana.utils.loadImageFromUrl
+
 
 class DisasterAdapter : RecyclerView.Adapter<DisasterAdapter.MainViewHolder>() {
 
@@ -34,7 +36,12 @@ class DisasterAdapter : RecyclerView.Adapter<DisasterAdapter.MainViewHolder>() {
                     desc.text = disaster?.text?.take(100)
                 }
 
-                disaster?.imageUrl?.let { imageview.loadImageFromUrl(it) }
+
+                if(disaster.imageUrl.isNullOrEmpty()) {
+                    imageview.loadImageFromUrl("")
+                } else {
+                    imageview.loadImageFromUrl(disaster.imageUrl)
+                }
             }
         }
     }

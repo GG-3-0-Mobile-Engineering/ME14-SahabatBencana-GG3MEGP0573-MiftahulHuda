@@ -5,9 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.Navigation
 import com.miftahulhudaf.sahabatbencana.databinding.FragmentMapsBinding
 import com.miftahulhudaf.sahabatbencana.databinding.FragmentSettingBinding
+import com.miftahulhudaf.sahabatbencana.ui.main.viewmodel.SettingsViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -21,18 +25,8 @@ private const val ARG_PARAM2 = "param2"
  */
 class SettingFragment : Fragment() {
     private lateinit var binding: FragmentSettingBinding
+    private val settingsViewModel by viewModel<SettingsViewModel>()
 
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,6 +36,20 @@ class SettingFragment : Fragment() {
         binding = FragmentSettingBinding.inflate(layoutInflater)
         binding.imgBack.setOnClickListener {
             Navigation.findNavController(binding.root).popBackStack()
+        }
+
+        settingsViewModel.getDarkMode().observe(viewLifecycleOwner) { isDarkModeActive: Boolean ->
+            if (isDarkModeActive) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                binding.darkModeSwitch.isChecked = true
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                binding.darkModeSwitch.isChecked = false
+            }
+        }
+
+        binding.darkModeSwitch.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+            settingsViewModel.saveThemeSetting(isChecked)
         }
 
         return binding.root

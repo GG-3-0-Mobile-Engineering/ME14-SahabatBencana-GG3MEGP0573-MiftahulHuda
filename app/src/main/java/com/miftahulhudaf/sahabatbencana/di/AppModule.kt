@@ -1,6 +1,7 @@
 package com.miftahulhudaf.sahabatbencana.di
 
 import com.miftahulhudaf.sahabatbencana.ui.main.viewmodel.MainViewModel
+import com.miftahulhudaf.sahabatbencana.ui.main.viewmodel.SettingsViewModel
 import com.miftahulhudaf.sahabatbencana.ui.setting.AppPreferences
 import com.miftahulhudaf.sahabatbencana.utils.dataStore
 import org.koin.android.ext.koin.androidContext
@@ -13,5 +14,5 @@ val preferenceModule = module {
 
 val viewModelModule = module {
     viewModel { MainViewModel(get()) }
-//    viewModel { SettingsViewModel(get()) }
+    viewModel { SettingsViewModel(get()) }
 }

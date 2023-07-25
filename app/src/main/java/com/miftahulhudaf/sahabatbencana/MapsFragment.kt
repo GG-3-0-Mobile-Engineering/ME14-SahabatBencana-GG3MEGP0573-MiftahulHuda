@@ -10,14 +10,18 @@ import androidx.fragment.app.Fragment
 import android.os.Bundle
 import android.provider.BaseColumns
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CursorAdapter
 import android.widget.SearchView
 import android.widget.SimpleCursorAdapter
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavGraph
@@ -39,6 +43,7 @@ import com.miftahulhudaf.sahabatbencana.data.model.DisasterType
 import com.miftahulhudaf.sahabatbencana.data.model.LocationData
 import com.miftahulhudaf.sahabatbencana.data.response.archive.Disaster
 import com.miftahulhudaf.sahabatbencana.data.response.archive.DisasterProperty
+import com.miftahulhudaf.sahabatbencana.data.utils.DateHelper
 import com.miftahulhudaf.sahabatbencana.data.utils.Resource
 import com.miftahulhudaf.sahabatbencana.databinding.ActivityMainBinding
 import com.miftahulhudaf.sahabatbencana.databinding.FragmentMapsBinding
@@ -46,7 +51,9 @@ import com.miftahulhudaf.sahabatbencana.ui.base.ViewModelFactory
 import com.miftahulhudaf.sahabatbencana.ui.main.adapter.DisasterAdapter
 import com.miftahulhudaf.sahabatbencana.ui.main.adapter.DisasterTypeAdapter
 import com.miftahulhudaf.sahabatbencana.ui.main.viewmodel.MainViewModel
+import com.miftahulhudaf.sahabatbencana.ui.main.viewmodel.SettingsViewModel
 import com.miftahulhudaf.sahabatbencana.utils.SpaceItemDecoration
+import com.miftahulhudaf.sahabatbencana.utils.isDarkMode
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MapsFragment : Fragment(),
@@ -59,6 +66,7 @@ class MapsFragment : Fragment(),
     private val adapter = DisasterAdapter()
 
     private val mainViewModel by viewModel<MainViewModel>()
+    private val settingsViewModel by viewModel<SettingsViewModel>()
     private val boundsBuilder = LatLngBounds.Builder()
 
 
@@ -84,6 +92,7 @@ class MapsFragment : Fragment(),
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
 
+        setupDarkMode()
         initSearchView()
         showDisasterTypeList(mainViewModel.disasterType)
 
@@ -109,10 +118,23 @@ class MapsFragment : Fragment(),
         }
     }
 
+    private fun setupDarkMode() {
+        settingsViewModel.getDarkMode().observe(viewLifecycleOwner){ isDarkModeActive ->
+            if (isDarkModeActive) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
+    }
+
 
     private fun setupViewModel(view: View) {
         val bottomSheet = view.findViewById<View>(R.id.bottom_sheet)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+
+        val lblDate = view.findViewById<TextView>(R.id.lblDate)
+        lblDate.text = DateHelper.selectedDateLabel()
 
         rvItems = bottomSheet.findViewById<RecyclerView?>(R.id.recyclerview).apply {
             layoutManager = LinearLayoutManager(activity)
@@ -195,16 +217,16 @@ class MapsFragment : Fragment(),
         gmaps.clear()
 
         disasters.forEach { feature ->
-            val lat = feature.geometry?.coordinates?.get(1)
-            val lon = feature.geometry?.coordinates?.get(0)
+            val lat = feature.geometry.coordinates?.get(1)
+            val lon = feature.geometry.coordinates?.get(0)
 
             if(lat != null && lon != null) {
                 val latLng = LatLng(lat, lon)
                 gmaps.addMarker(
                     MarkerOptions()
                         .position(latLng)
-                        .title(feature.properties?.title)
-                        .snippet(feature.properties?.createdAt)
+                        .title(feature.properties.title)
+                        .snippet(feature.properties.createdAt)
                 )
                 boundsBuilder.include(latLng)
             }
@@ -242,7 +264,8 @@ class MapsFragment : Fragment(),
     override fun onDisasterTypeClick(view: View, disasterType: DisasterType) {
         val hasFilter = mainViewModel.applyFilter(disasterType.en)
 
-        val cardBackgroundColor = if (hasFilter) Color.GREEN else Color.WHITE
+        var cardDefaultBg = if(isDarkMode(requireContext())) Color.rgb(66, 66, 66) else Color.WHITE
+        val cardBackgroundColor = if (hasFilter) Color.rgb(0, 136, 12) else cardDefaultBg
         (view as CardView).setCardBackgroundColor(cardBackgroundColor)
     }
 }

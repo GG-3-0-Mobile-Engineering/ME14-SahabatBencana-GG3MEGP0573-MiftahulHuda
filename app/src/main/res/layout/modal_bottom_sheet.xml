@@ -1,32 +1,3 @@
-<!--
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Halo" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constrainedHeight="true"
-        android:orientation="vertical"
-        tools:itemCount="2"
-        android:scrollbars="vertical"
-        tools:listitem="@layout/adapter_disaster"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-
-
-</LinearLayout>-->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -34,7 +5,7 @@
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="?attr/backgroundColor"
     android:orientation="vertical"
     app:behavior_hideable="true"
     app:behavior_peekHeight="80dp"
@@ -58,8 +29,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Informasi Bencana Terkini"
-            android:textColor="@color/cardview_dark_background"
+            android:textColor="?attr/textFillColor"
             android:textStyle="bold" />
+
+        <TextView
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:id="@+id/lblDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pada Rentang Waktu"
+            android:textColor="?attr/textFillColor"
+            android:alpha="0.6"
+            />
 
     </LinearLayout>
 
