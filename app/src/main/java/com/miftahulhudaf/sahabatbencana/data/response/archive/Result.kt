@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class Result(
 
     @field:SerializedName("features")
-    val features: List<Disaster?>? = null,
+    val features: List<Disaster>,
 
     @field:SerializedName("type")
     val type: String? = null

@@ -6,36 +6,40 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.miftahulhudaf.sahabatbencana.data.response.archive.Disaster
+import com.miftahulhudaf.sahabatbencana.data.response.archive.DisasterProperty
+import com.miftahulhudaf.sahabatbencana.data.utils.LocalData
 import com.miftahulhudaf.sahabatbencana.databinding.DisasterItemBinding
 import com.miftahulhudaf.sahabatbencana.utils.loadImageFromUrl
 
 class DisasterAdapter : RecyclerView.Adapter<DisasterAdapter.MainViewHolder>() {
 
-    var disasterList = mutableListOf<Disaster>()
+    var disasterList = mutableListOf<DisasterProperty>()
 
     inner class MainViewHolder(private val binding: DisasterItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(disaster: Disaster) {
+        fun bind(disaster: DisasterProperty) {
             with(binding) {
 
-                if(disaster.properties?.title?.trim() == "") {
-                    title.text = "Bencana Alam"
+                if(disaster.title.isNullOrEmpty()) {
+                    val disasterTypes = LocalData.getDisasterTypes()
+                    val disasterDesc = disasterTypes.filter { type -> type.en == disaster.disasterType }
+                    title.text = "Bencana Alam ${disasterDesc[0].id}"
                 } else {
-                    title.text = disaster.properties?.title
+                    title.text = disaster.title
                 }
 
-                if(disaster.properties?.text?.trim() == "") {
-                    desc.text = "Bencana Alam"
+                if(disaster.text.isNullOrEmpty()) {
+                    desc.text = "Deskripsi Bencana"
                 } else {
-                    desc.text = disaster.properties?.text?.take(100)
+                    desc.text = disaster?.text?.take(100)
                 }
 
-                disaster.properties?.imageUrl?.let { imageview.loadImageFromUrl(it) }
+                disaster?.imageUrl?.let { imageview.loadImageFromUrl(it) }
             }
         }
     }
 
-    fun setDisaster(disasters: List<Disaster>) {
+    fun setDisaster(disasters: List<DisasterProperty>) {
         this.disasterList = disasters.toMutableList()
         Log.d("DisasterAdapter", this.disasterList.toString())
         notifyDataSetChanged()

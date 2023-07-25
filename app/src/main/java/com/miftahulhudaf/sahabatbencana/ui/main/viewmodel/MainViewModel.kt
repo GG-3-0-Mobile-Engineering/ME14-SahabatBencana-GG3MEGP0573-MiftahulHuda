@@ -6,54 +6,78 @@ import com.miftahulhudaf.sahabatbencana.data.repository.MainRepository
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.miftahulhudaf.sahabatbencana.data.response.archive.Disaster
+import com.miftahulhudaf.sahabatbencana.data.utils.Resource
 import com.miftahulhudaf.sahabatbencana.utils.NetworkState
 import kotlinx.coroutines.*
 
-class MainViewModel constructor(private val mainRepository: MainRepository) : ViewModel() {
+class MainViewModel constructor(private val repository: MainRepository) : ViewModel() {
 
-    private val _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String>
-        get() = _errorMessage
+    private val _searchQuery = MutableLiveData<String?>()
+    private val _filterTypes = MutableLiveData<List<String>>()
 
-    val disasterList = MutableLiveData<List<Disaster>>()
-    var job: Job? = null
+    private val _archiveFeatures: LiveData<Resource<List<Disaster>>> =
+        _searchQuery.switchMap { query ->
+            repository.getReportsArchive(query).asLiveData()
+        }
 
-    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        onError("Exception handled: ${throwable.localizedMessage}")
+    val supportedLocations = repository.supportedLocations
+    val disasterType = repository.disasterTypes
+
+    init {
+        _searchQuery.value = null
+        _filterTypes.value = emptyList()
     }
-    val loading = MutableLiveData<Boolean>()
 
-    fun getAllDisaster() {
-        Log.d("Thread Outside", Thread.currentThread().name)
+    val filteredArchiveFeatures: LiveData<Resource<List<Disaster>>> =
+        _filterTypes.switchMap { filterTypes ->
+            if (filterTypes.isEmpty()) {
+                _archiveFeatures
+            } else {
+                filterArchiveFeatures(filterTypes)
+            }
+        }
 
-        viewModelScope.launch {
-            Log.d("Thread Inside", Thread.currentThread().name)
-            when (val response = mainRepository.getDisasters()) {
-                is NetworkState.Success -> {
-                    Log.d("API", response.data.result?.features.toString())
-                    disasterList.postValue(response.data.result?.features as List<Disaster>?)
-                }
-                is NetworkState.Error -> {
-                    if (response.response.code() == 401) {
-                        //movieList.postValue(NetworkState.Error())
-                    } else {
-                        //movieList.postValue(NetworkState.Error)
-                    }
-                }
+    private fun filterArchiveFeatures(types: List<String>): LiveData<Resource<List<Disaster>>> {
+        return _archiveFeatures.map { resource ->
+            if (resource is Resource.Success) {
+                val filteredFeatures = filterFeatures(resource.data!!, types)
+                Resource.Success(filteredFeatures)
+            } else {
+                resource
             }
         }
     }
 
-    private fun onError(message: String) {
-        _errorMessage.value = message
-        loading.value = false
+    fun searchCity(query: String? = null) {
+        _searchQuery.value = query
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        job?.cancel()
+    fun applyFilter(type: String): Boolean {
+        val currentFilterTypes = _filterTypes.value ?: emptyList()
+
+        return if (type in currentFilterTypes) {
+            val updatedFilterTypes = currentFilterTypes - type
+            _filterTypes.postValue(updatedFilterTypes)
+
+            false
+        } else {
+            val updatedFilterTypes = currentFilterTypes + type
+            _filterTypes.postValue(updatedFilterTypes)
+
+            true
+        }
+    }
+
+    private fun filterFeatures(
+        features: List<Disaster>,
+        disasterType: List<String>
+    ): List<Disaster> {
+        return features.filter { it.properties.disasterType in disasterType }
     }
 
 }

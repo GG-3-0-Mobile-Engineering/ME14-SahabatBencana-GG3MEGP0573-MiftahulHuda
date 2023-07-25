@@ -5,11 +5,11 @@ import com.google.gson.annotations.SerializedName
 data class Disaster(
 
     @field:SerializedName("geometry")
-    val geometry: Geometry? = null,
+    val geometry: Geometry,
 
     @field:SerializedName("type")
-    val type: String? = null,
+    val type: String,
 
     @field:SerializedName("properties")
-    val properties: DisasterProperty? = null
+    val properties: DisasterProperty
 )
