@@ -19,5 +19,6 @@ interface ApiService {
     @GET("floodgauges")
     suspend fun getMonitoring(
         @Query("admin") admin: String = "ID-JK",
+        @Query("minimum_state") minimumState: Int = 1
     ): MonitoringResponse
 }

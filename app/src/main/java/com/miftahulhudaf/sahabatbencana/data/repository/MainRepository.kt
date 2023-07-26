@@ -42,6 +42,13 @@ class MainRepository(private val apiService: ApiService) {
                 supportedLocations.find { it.province.lowercase() == cityName?.lowercase() }?.code
 
             val response = apiService.getReportsArchive(startDate, endDate, city = cityCode)
+
+            if(response.statusCode != 200) {
+                Log.e(TAG, "getReportsArchive: ${response.toString()}")
+                emit(Resource.Error("Bencana Tidak Ditemukan!"))
+                return@flow
+            }
+
             val features = response.result.features
 
             if (features.isNotEmpty()) {
@@ -55,9 +62,9 @@ class MainRepository(private val apiService: ApiService) {
         }
     }
 
-    fun getMonitoring(): Flow<Resource<List<GeometriesItem>>> = flow {
+    fun getMonitoring(minimumState: Int = 1): Flow<Resource<List<GeometriesItem>>> = flow {
         try {
-            val response = apiService.getMonitoring()
+            val response = apiService.getMonitoring(minimumState = minimumState)
             val geometries = response.result.objects.output.geometries
 
             if (geometries.isNotEmpty()) {
