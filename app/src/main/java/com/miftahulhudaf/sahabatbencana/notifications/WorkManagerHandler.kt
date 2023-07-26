@@ -1,4 +1,4 @@
-package com.huda.sahabatbanjir.notification
+package com.miftahulhudaf.sahabatbencana
 
 import android.content.Context
 import android.util.Log

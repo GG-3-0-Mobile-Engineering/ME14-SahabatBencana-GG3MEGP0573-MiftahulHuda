@@ -1,4 +1,4 @@
-package com.huda.sahabatbanjir.notification
+package com.miftahulhudaf.sahabatbencana
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
